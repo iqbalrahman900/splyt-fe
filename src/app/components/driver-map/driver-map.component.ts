@@ -126,9 +126,7 @@ export class DriverMapComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Clear driver history path
-   */
+  
   clearDriverHistory(): void {
     this.driverHistorySubject.next([]);
     this.selectedDriver = null;
