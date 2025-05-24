@@ -1,0 +1,165 @@
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .toolbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .logo-icon {
+    font-size: 28px;
+    color: #FFF;
+  }
+  
+  .app-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #FFF;
+  }
+  
+  .nav-section {
+    display: flex;
+    gap: 16px;
+    
+    .nav-text {
+      margin-left: 8px;
+    }
+    
+    button.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+  }
+  
+  .stats-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-size: 14px;
+    color: #FFF;
+  
+    .online-icon {
+      color: #4CAF50;
+      font-size: 16px;
+    }
+  
+    .offline-icon {
+      color: #FF9800;
+      font-size: 16px;
+    }
+  }
+  
+  .live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #4CAF50;
+    font-size: 12px;
+    font-weight: 500;
+  
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  .mobile-menu {
+    display: none;
+  }
+  
+  .mobile-stats {
+    background-color: rgba(63, 81, 181, 0.9);
+    padding: 8px;
+    color: white;
+    font-size: 12px;
+    display: none;
+  
+    .mobile-stats-content {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+  
+    .mobile-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+  
+      .online-icon {
+        color: #4CAF50;
+        font-size: 14px;
+      }
+  
+      .offline-icon {
+        color: #FF9800;
+        font-size: 14px;
+      }
+  
+      .pulse-dot-small {
+        width: 6px;
+        height: 6px;
+        background-color: #4CAF50;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+  }
+  
+  // Responsive design
+  @media (max-width: 768px) {
+    .nav-section {
+      display: none;
+    }
+    
+    .stats-section {
+      display: none;
+    }
+    
+    .mobile-menu {
+      display: block;
+    }
+    
+    .mobile-stats {
+      display: block;
+    }
+    
+    .app-title {
+      font-size: 16px;
+    }
+  }

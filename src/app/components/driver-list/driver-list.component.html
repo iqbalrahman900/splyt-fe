@@ -1,0 +1,291 @@
+<div class="driver-list-container" fxLayout="row" fxLayoutGap="16px" fxFill>
+  
+    <!-- Left Panel - Driver List -->
+    <div class="drivers-panel" fxFlex="60" fxLayout="column">
+      
+      <!-- Header with Controls -->
+      <mat-card class="controls-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>group</mat-icon>
+            Driver Management
+          </mat-card-title>
+          <div class="header-actions" fxLayout="row" fxLayoutGap="8px">
+            <button mat-icon-button (click)="refreshData()" matTooltip="Refresh data">
+              <mat-icon>refresh</mat-icon>
+            </button>
+            <button mat-icon-button (click)="exportToCSV()" matTooltip="Export to CSV">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <!-- Search Bar -->
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Search drivers...</mat-label>
+            <input matInput [formControl]="searchControl" placeholder="Enter driver ID">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+          
+          <!-- Filter Chips -->
+          <div class="filter-chips" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
+            <span class="filter-label">Filter:</span>
+            <mat-chip-listbox>
+              <mat-chip-option 
+                [selected]="statusFilter === 'all'"
+                (click)="setStatusFilter('all')"
+                [matBadge]="(getFilterCount('all') | async) || 0"
+                matBadgePosition="after">
+                All Drivers
+              </mat-chip-option>
+              <mat-chip-option 
+                [selected]="statusFilter === 'online'"
+                (click)="setStatusFilter('online')"
+                [matBadge]="(getFilterCount('online') | async) || 0"
+                matBadgePosition="after"
+                [style.background-color]="statusFilter === 'online' ? '#4CAF50' : ''"
+                [style.color]="statusFilter === 'online' ? 'white' : ''">
+                Online
+              </mat-chip-option>
+              <mat-chip-option 
+                [selected]="statusFilter === 'offline'"
+                (click)="setStatusFilter('offline')"
+                [matBadge]="(getFilterCount('offline') | async) || 0"
+                matBadgePosition="after"
+                [style.background-color]="statusFilter === 'offline' ? '#FF9800' : ''"
+                [style.color]="statusFilter === 'offline' ? 'white' : ''">
+                Offline
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+          
+          <!-- Sort Controls -->
+          <div class="sort-controls" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
+            <span class="sort-label">Sort by:</span>
+            <button mat-button (click)="setSortBy('id')" [class.active]="sortBy === 'id'">
+              <mat-icon>{{ getSortIcon('id') }}</mat-icon>
+              Driver ID
+            </button>
+            <button mat-button (click)="setSortBy('timestamp')" [class.active]="sortBy === 'timestamp'">
+              <mat-icon>{{ getSortIcon('timestamp') }}</mat-icon>
+              Last Update
+            </button>
+            <button mat-button (click)="setSortBy('status')" [class.active]="sortBy === 'status'">
+              <mat-icon>{{ getSortIcon('status') }}</mat-icon>
+              Status
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Driver List -->
+      <div class="driver-list" fxFlex>
+        <div class="list-container" *ngIf="filteredDrivers$ | async as drivers">
+          
+          <!-- Loading State -->
+          <div class="loading-state" *ngIf="isLoading" fxLayout="column" fxLayoutAlign="center center">
+            <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+            <span>Loading drivers...</span>
+          </div>
+          
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="!isLoading && drivers.length === 0" fxLayout="column" fxLayoutAlign="center center">
+            <mat-icon class="large-icon">search_off</mat-icon>
+            <h3>No drivers found</h3>
+            <p>Try adjusting your search or filter criteria</p>
+          </div>
+          
+          <!-- Driver Cards -->
+          <div class="driver-cards" *ngIf="!isLoading && drivers.length > 0">
+            <mat-card 
+              *ngFor="let driver of drivers; trackBy: trackByDriverId"
+              class="driver-card"
+              [class.selected]="selectedDriver?.driver_id === driver.driver_id"
+              (click)="selectDriver(driver)">
+              
+              <mat-card-header>
+                <div mat-card-avatar class="driver-avatar">
+                  <mat-icon [style.color]="getStatusColor(driver)">drive_eta</mat-icon>
+                </div>
+                <mat-card-title>{{ driver.driver_id }}</mat-card-title>
+                <mat-card-subtitle>
+                  <mat-chip 
+                    [style.background-color]="getStatusColor(driver)"
+                    [style.color]="'white'">
+                    {{ getStatusText(driver) }}
+                  </mat-chip>
+                </mat-card-subtitle>
+                <div class="card-actions">
+                  <button mat-icon-button (click)="loadDriverHistory(driver.driver_id); $event.stopPropagation()">
+                    <mat-icon>timeline</mat-icon>
+                  </button>
+                </div>
+              </mat-card-header>
+              
+              <mat-card-content>
+                <div class="driver-info" fxLayout="column" fxLayoutGap="8px">
+                  <div class="info-row" fxLayout="row" fxLayoutAlign="space-between center">
+                    <span class="label">
+                      <mat-icon>location_on</mat-icon>
+                      Location:
+                    </span>
+                    <span class="value">{{ driver.latitude.toFixed(4) }}, {{ driver.longitude.toFixed(4) }}</span>
+                  </div>
+                  
+                  <div class="info-row" fxLayout="row" fxLayoutAlign="space-between center">
+                    <span class="label">
+                      <mat-icon>schedule</mat-icon>
+                      Last Seen:
+                    </span>
+                    <span class="value">{{ formatLastSeen(driver.lastSeenMinutes) }}</span>
+                  </div>
+                  
+                  <div class="info-row" fxLayout="row" fxLayoutAlign="space-between center">
+                    <span class="label">
+                      <mat-icon>update</mat-icon>
+                      Version:
+                    </span>
+                    <span class="value">#{{ driver.version }}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Panel - Driver Details -->
+    <div class="details-panel" fxFlex="40" fxLayout="column">
+      
+      <!-- Selected Driver Details -->
+      <mat-card *ngIf="selectedDriver" class="details-card">
+        <mat-card-header>
+          <div mat-card-avatar class="driver-avatar-large">
+            <mat-icon [style.color]="getStatusColor(selectedDriver)">drive_eta</mat-icon>
+          </div>
+          <mat-card-title>{{ selectedDriver.driver_id }}</mat-card-title>
+          <mat-card-subtitle>
+            <mat-chip 
+              [style.background-color]="getStatusColor(selectedDriver)"
+              [style.color]="'white'">
+              {{ getStatusText(selectedDriver) }}
+            </mat-chip>
+          </mat-card-subtitle>
+          <div class="card-actions">
+            <button mat-icon-button (click)="clearSelection()" matTooltip="Clear selection">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="detailed-info" fxLayout="column" fxLayoutGap="16px">
+            
+            <!-- Location Info -->
+            <div class="info-section">
+              <h4><mat-icon>location_on</mat-icon> Current Location</h4>
+              <div class="location-details">
+                <p><strong>Latitude:</strong> {{ selectedDriver.latitude }}</p>
+                <p><strong>Longitude:</strong> {{ selectedDriver.longitude }}</p>
+                <p><strong>Coordinates:</strong> {{ selectedDriver.latitude }}, {{ selectedDriver.longitude }}</p>
+              </div>
+            </div>
+            
+            <!-- Timing Info -->
+            <div class="info-section">
+              <h4><mat-icon>schedule</mat-icon> Timing</h4>
+              <div class="timing-details">
+                <p><strong>Last Update:</strong> {{ formatTimestamp(selectedDriver.timestamp) }}</p>
+                <p><strong>Last Seen:</strong> {{ formatLastSeen(selectedDriver.lastSeenMinutes) }}</p>
+                <p><strong>Status:</strong> {{ getStatusText(selectedDriver) }}</p>
+              </div>
+            </div>
+            
+            <!-- Version Info -->
+            <div class="info-section">
+              <h4><mat-icon>info</mat-icon> System Info</h4>
+              <div class="system-details">
+                <p><strong>Version:</strong> {{ selectedDriver.version }}</p>
+                <p><strong>Driver ID:</strong> {{ selectedDriver.driver_id }}</p>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="driver-actions" fxLayout="row" fxLayoutGap="8px">
+              <button mat-raised-button color="primary" (click)="loadDriverHistory(selectedDriver.driver_id)">
+                <mat-icon>timeline</mat-icon>
+                View History
+              </button>
+              <button mat-stroked-button color="accent">
+                <mat-icon>navigation</mat-icon>
+                Navigate
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Driver History -->
+      <mat-card *ngIf="showHistoryFor" class="history-card" fxFlex>
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>timeline</mat-icon>
+            Movement History
+          </mat-card-title>
+          <mat-card-subtitle>{{ showHistoryFor }}</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="history-content" *ngIf="driverHistory">
+            <div class="history-summary" fxLayout="row" fxLayoutAlign="space-between center">
+              <span><strong>Total Locations:</strong> {{ driverHistory.locations.length }}</span>
+              <button mat-icon-button (click)="showHistoryFor = null; driverHistory = null">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            
+            <div class="location-timeline">
+              <div 
+                *ngFor="let location of driverHistory.locations; let i = index"
+                class="timeline-item"
+                [class.latest]="i === 0">
+                
+                <div class="timeline-marker">
+                  <div class="marker-dot" [class.latest]="i === 0"></div>
+                  <div class="marker-line" *ngIf="i < driverHistory.locations.length - 1"></div>
+                </div>
+                
+                <div class="timeline-content">
+                  <div class="location-info">
+                    <div class="coordinates">
+                      <mat-icon>location_on</mat-icon>
+                      {{ location.latitude.toFixed(6) }}, {{ location.longitude.toFixed(6) }}
+                    </div>
+                    <div class="timestamp">
+                      <mat-icon>schedule</mat-icon>
+                      {{ formatTimestamp(location.timestamp) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- History Loading -->
+          <div class="history-loading" *ngIf="showHistoryFor && !driverHistory" fxLayout="column" fxLayoutAlign="center center">
+            <mat-progress-spinner diameter="30" mode="indeterminate"></mat-progress-spinner>
+            <span>Loading history...</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Default State -->
+      <div class="default-state" *ngIf="!selectedDriver && !showHistoryFor" fxLayout="column" fxLayoutAlign="center center" fxFlex>
+        <mat-icon class="large-icon">touch_app</mat-icon>
+        <h3>Select a Driver</h3>
+        <p>Click on a driver from the list to view detailed information and movement history.</p>
+      </div>
+    </div>
+  </div>

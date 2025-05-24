@@ -1,0 +1,215 @@
+.map-container {
+    height: calc(100vh - 64px); // Full height minus navbar
+    background-color: #f5f5f5;
+  }
+  
+  .map-controls {
+    background: white;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
+    
+    .radius-control {
+      min-width: 200px;
+      
+      .radius-label {
+        min-width: 40px;
+        font-size: 12px;
+        color: #666;
+      }
+    }
+    
+    .driver-count {
+      mat-chip-listbox {
+        display: flex;
+        gap: 8px;
+      }
+    }
+  }
+  
+  .map-wrapper {
+    position: relative;
+    flex: 1;
+    
+    google-map {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    
+    span {
+      font-size: 16px;
+      color: #666;
+    }
+  }
+  
+  .no-drivers-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #666;
+    z-index: 500;
+    
+    .large-icon {
+      font-size: 64px;
+      color: #ccc;
+    }
+    
+    h2 {
+      margin: 0;
+      font-weight: 300;
+    }
+    
+    p {
+      margin: 8px 0;
+      opacity: 0.8;
+    }
+  }
+  
+  .map-legend {
+    background: white;
+    padding: 12px;
+    border-top: 1px solid #e0e0e0;
+    
+    .legend-item {
+      font-size: 14px;
+      color: #666;
+      
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+        
+        &.online {
+          background-color: #4CAF50;
+        }
+        
+        &.offline {
+          background-color: #FF9800;
+        }
+      }
+      
+      .legend-icon {
+        font-size: 16px;
+        color: #666;
+      }
+    }
+  }
+  
+  // Info Window Styles
+  .driver-info {
+    min-width: 250px;
+    padding: 8px;
+    
+    .driver-header {
+      margin-bottom: 12px;
+      
+      h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+      }
+    }
+    
+    .driver-details {
+      font-size: 14px;
+      color: #666;
+      
+      mat-icon {
+        font-size: 16px;
+        color: #999;
+      }
+    }
+    
+    .driver-actions {
+      button {
+        flex: 1;
+      }
+    }
+  }
+  
+  // Responsive Design
+  @media (max-width: 768px) {
+    .map-controls {
+      flex-direction: column;
+      gap: 12px;
+      
+      .radius-control {
+        min-width: auto;
+      }
+    }
+    
+    .map-legend {
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+    
+    .driver-info {
+      min-width: 200px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .map-container {
+      height: calc(100vh - 120px); // Account for mobile navbar
+    }
+    
+    .map-controls {
+      padding: 8px;
+    }
+    
+    .driver-actions {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+  
+  // Animation for markers
+  @keyframes markerDrop {
+    0% {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  // Custom button toggle styles
+  mat-button-toggle {
+    &.mat-button-toggle-checked {
+      background-color: #3f51b5;
+      color: white;
+    }
+  }
+  
+  // Custom slider styles
+  mat-slider {
+    width: 120px;
+  }
+  
+  // Loading spinner custom colors
+  mat-progress-spinner {
+    &.mat-primary {
+      circle {
+        stroke: #3f51b5;
+      }
+    }
+  }

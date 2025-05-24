@@ -1,0 +1,190 @@
+/* Global Styles */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #fafafa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  
+  .main-content {
+    flex: 1;
+    overflow: hidden;
+  }
+}
+
+// Custom Material Design overrides
+.mat-toolbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.mat-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.mat-fab {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15) !important;
+}
+
+// Utility classes
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.margin-top {
+  margin-top: 16px;
+}
+
+.margin-bottom {
+  margin-bottom: 16px;
+}
+
+.padding {
+  padding: 16px;
+}
+
+// Loading states
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+// Responsive breakpoints
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+
+@media (max-width: $mobile) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: $tablet) {
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+// Animation utilities
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Animation utilities
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(63, 81, 181, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(63, 81, 181, 0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+// Status colors
+.status-online {
+  color: #4CAF50 !important;
+}
+
+.status-offline {
+  color: #FF9800 !important;
+}
+
+.status-error {
+  color: #F44336 !important;
+}
+
+// Button variants
+.btn-success {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.btn-warning {
+  background-color: #FF9800 !important;
+  color: white !important;
+}
+
+.btn-danger {
+  background-color: #F44336 !important;
+  color: white !important;
+}

@@ -1,0 +1,149 @@
+<div class="stats-container" fxLayout="column" fxLayoutGap="24px" fxFill>
+  
+    <!-- Header -->
+    <div class="stats-header" fxLayout="row" fxLayoutAlign="space-between center">
+      <h1>
+        <mat-icon>analytics</mat-icon>
+        System Statistics
+      </h1>
+      <button mat-raised-button color="primary" (click)="refreshData()" [disabled]="isLoading">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  
+    <!-- Quick Stats Cards -->
+    <div class="quick-stats" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
+      
+      <!-- Online Drivers -->
+      <mat-card fxFlex="30" fxFlex.xs="100" class="stat-card online-card">
+        <mat-card-content fxLayout="row" fxLayoutAlign="space-between center">
+          <div>
+            <h2 *ngIf="driverCounts$ | async as counts">{{ counts.online }}</h2>
+            <p>Online Drivers</p>
+          </div>
+          <mat-icon class="stat-icon">radio_button_checked</mat-icon>
+        </mat-card-content>
+      </mat-card>
+  
+      <!-- Offline Drivers -->
+      <mat-card fxFlex="30" fxFlex.xs="100" class="stat-card offline-card">
+        <mat-card-content fxLayout="row" fxLayoutAlign="space-between center">
+          <div>
+            <h2 *ngIf="driverCounts$ | async as counts">{{ counts.offline }}</h2>
+            <p>Offline Drivers</p>
+          </div>
+          <mat-icon class="stat-icon">radio_button_unchecked</mat-icon>
+        </mat-card-content>
+      </mat-card>
+  
+      <!-- Total Drivers -->
+      <mat-card fxFlex="30" fxFlex.xs="100" class="stat-card total-card">
+        <mat-card-content fxLayout="row" fxLayoutAlign="space-between center">
+          <div>
+            <h2 *ngIf="driverCounts$ | async as counts">{{ counts.total }}</h2>
+            <p>Total Drivers</p>
+          </div>
+          <mat-icon class="stat-icon">group</mat-icon>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  
+    <!-- Detailed Statistics -->
+    <mat-card class="detailed-stats" *ngIf="stats$ | async as stats">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>assessment</mat-icon>
+          Detailed Metrics
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div fxLayout="row wrap" fxLayoutGap="32px" fxLayoutAlign="start start">
+          
+          <!-- System Metrics -->
+          <div fxFlex="45" fxFlex.xs="100" class="metric-section">
+            <h3>System Performance</h3>
+            <div class="metric-list">
+              <div class="metric-item" fxLayout="row" fxLayoutAlign="space-between center">
+                <span>Total Location Updates:</span>
+                <strong>{{ stats.totalUpdates | number }}</strong>
+              </div>
+              <div class="metric-item" fxLayout="row" fxLayoutAlign="space-between center">
+                <span>Recent Updates (5min):</span>
+                <strong>{{ stats.recentUpdates | number }}</strong>
+              </div>
+              <div class="metric-item" fxLayout="row" fxLayoutAlign="space-between center">
+                <span>Last Updated:</span>
+                <strong>{{ stats.timestamp | date:'medium' }}</strong>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Driver Metrics -->
+          <div fxFlex="45" fxFlex.xs="100" class="metric-section" *ngIf="driverCounts$ | async as counts">
+            <h3>Driver Distribution</h3>
+            <div class="metric-list">
+              <div class="metric-item" fxLayout="row" fxLayoutAlign="space-between center">
+                <span>Online Percentage:</span>
+                <strong>{{ (counts.online / counts.total * 100) | number:'1.1-1' }}%</strong>
+              </div>
+              <div class="metric-item" fxLayout="row" fxLayoutAlign="space-between center">
+                <span>Offline Percentage:</span>
+                <strong>{{ (counts.offline / counts.total * 100) | number:'1.1-1' }}%</strong>
+              </div>
+              <div class="metric-item" fxLayout="row" fxLayoutAlign="space-between center">
+                <span>Average Updates per Driver:</span>
+                <strong>{{ (stats.totalUpdates / counts.total) | number:'1.1-1' }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  
+    <!-- Real-time Status -->
+    <mat-card class="realtime-status">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>speed</mat-icon>
+          Real-time Status
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="16px">
+          
+          <!-- Connection Status -->
+          <div class="status-item" fxLayout="column" fxLayoutAlign="center center">
+            <div class="status-indicator online">
+              <div class="pulse-dot"></div>
+            </div>
+            <h4>API Connected</h4>
+            <p>Real-time updates active</p>
+          </div>
+  
+          <!-- Update Frequency -->
+          <div class="status-item" fxLayout="column" fxLayoutAlign="center center">
+            <mat-icon class="frequency-icon">update</mat-icon>
+            <h4>30 Second Updates</h4>
+            <p>Automatic refresh enabled</p>
+          </div>
+  
+          <!-- Data Freshness -->
+          <div class="status-item" fxLayout="column" fxLayoutAlign="center center">
+            <mat-icon class="freshness-icon">schedule</mat-icon>
+            <h4>Data Fresh</h4>
+            <p>Last sync: {{ (stats$ | async)?.timestamp | date:'shortTime' }}</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  
+    <!-- Loading State -->
+    <div class="loading-overlay" *ngIf="isLoading" fxLayout="column" fxLayoutAlign="center center">
+      <mat-progress-spinner diameter="60" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading statistics...</span>
+    </div>
+  
+  </div>

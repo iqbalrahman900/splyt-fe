@@ -1,0 +1,79 @@
+<mat-toolbar color="primary" class="navbar">
+    <div class="toolbar-content">
+      <!-- Logo and Title -->
+      <div class="logo-section">
+        <mat-icon class="logo-icon">drive_eta</mat-icon>
+        <span class="app-title">Driver Location Tracker</span>
+      </div>
+  
+      <!-- Navigation Menu -->
+      <div class="nav-section">
+        <button 
+          mat-button 
+          [class.active]="isCurrentRoute('/map')"
+          (click)="navigateToMap()"
+          matTooltip="Real-time driver map">
+          <mat-icon>map</mat-icon>
+          <span class="nav-text">Map</span>
+        </button>
+  
+        <button 
+          mat-button 
+          [class.active]="isCurrentRoute('/drivers')"
+          (click)="navigateToDrivers()"
+          matTooltip="Driver list and details">
+          <mat-icon>list</mat-icon>
+          <span class="nav-text">Drivers</span>
+        </button>
+  
+        <button 
+          mat-button 
+          [class.active]="isCurrentRoute('/stats')"
+          (click)="navigateToStats()"
+          matTooltip="System statistics">
+          <mat-icon>analytics</mat-icon>
+          <span class="nav-text">Stats</span>
+        </button>
+      </div>
+  
+      <!-- Live Stats -->
+      <div class="stats-section">
+        <!-- Online Drivers Count -->
+        <div class="stat-chip" *ngIf="driverCounts$ | async as counts">
+          <mat-icon class="online-icon">radio_button_checked</mat-icon>
+          <span>{{ counts.online }} Online</span>
+          <mat-icon class="offline-icon">radio_button_unchecked</mat-icon>
+          <span>{{ counts.offline }} Offline</span>
+        </div>
+  
+        <!-- Live Indicator -->
+        <div class="live-indicator" matTooltip="Real-time updates active">
+          <div class="pulse-dot"></div>
+          <span>LIVE</span>
+        </div>
+      </div>
+  
+      <!-- Mobile Menu Button -->
+      <button mat-icon-button class="mobile-menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
+  
+  <!-- Mobile Stats Bar -->
+  <div class="mobile-stats">
+    <div class="mobile-stats-content" *ngIf="driverCounts$ | async as counts">
+      <div class="mobile-stat">
+        <mat-icon class="online-icon">radio_button_checked</mat-icon>
+        <span>{{ counts.online }} Online</span>
+      </div>
+      <div class="mobile-stat">
+        <mat-icon class="offline-icon">radio_button_unchecked</mat-icon>
+        <span>{{ counts.offline }} Offline</span>
+      </div>
+      <div class="mobile-stat">
+        <div class="pulse-dot-small"></div>
+        <span>LIVE</span>
+      </div>
+    </div>
+  </div>

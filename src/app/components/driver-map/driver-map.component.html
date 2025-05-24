@@ -1,0 +1,172 @@
+<div class="map-container">
+  
+    <!-- Map Controls -->
+    <div class="map-controls">
+      <!-- Left Controls -->
+      <div class="left-controls">
+        <!-- Online Filter Toggle -->
+        <mat-button-toggle 
+          [checked]="showOnlineOnly" 
+          (change)="toggleOnlineFilter()"
+          matTooltip="Show only online drivers">
+          <mat-icon>radio_button_checked</mat-icon>
+          Online Only
+        </mat-button-toggle>
+  
+        <!-- History Toggle -->
+        <mat-button-toggle 
+          [checked]="showDriverHistory" 
+          (change)="toggleHistoryDisplay()"
+          matTooltip="Show driver movement history">
+          <mat-icon>timeline</mat-icon>
+          History
+        </mat-button-toggle>
+  
+        <!-- Radius Display -->
+        <div class="radius-control">
+          <mat-icon>search</mat-icon>
+          <span class="radius-label">{{ radiusFilter }}km radius</span>
+        </div>
+      </div>
+  
+      <!-- Right Controls -->
+      <div class="right-controls">
+        <!-- Driver Count -->
+        <div class="driver-count" *ngIf="drivers$ | async as drivers">
+          <span class="online-count">{{ getOnlineDriverCount(drivers) }} Online</span>
+          <span class="offline-count">{{ getOfflineDriverCount(drivers) }} Offline</span>
+        </div>
+  
+        <!-- Refresh Button -->
+        <button 
+          mat-fab 
+          color="primary" 
+          (click)="refreshData()"
+          matTooltip="Refresh driver locations"
+          [disabled]="isLoading">
+          <mat-icon *ngIf="!isLoading">refresh</mat-icon>
+          <mat-progress-spinner 
+            *ngIf="isLoading"
+            diameter="24"
+            mode="indeterminate">
+          </mat-progress-spinner>
+        </button>
+      </div>
+    </div>
+  
+    <!-- Google Maps -->
+    <div class="map-wrapper">
+      <google-map
+        #map
+        [center]="center"
+        [zoom]="zoom"
+        [options]="mapOptions"
+        (mapClick)="onMapClick($event)"
+        width="100%"
+        height="100%">
+        
+        <!-- Driver Markers -->
+        <ng-container *ngIf="drivers$ | async as drivers">
+          <map-marker
+            *ngFor="let driver of drivers; trackBy: trackByDriverId"
+            #marker="mapMarker"
+            [position]="{ lat: driver.latitude, lng: driver.longitude }"
+            [title]="driver.driver_id + ' (' + (driver.isOnline ? 'Online' : 'Offline') + ')'"
+            (mapClick)="onMarkerClick(marker, driver)">
+          </map-marker>
+        </ng-container>
+  
+        <!-- Info Window -->
+        <map-info-window #infoWindow>
+          <div class="driver-info" *ngIf="selectedDriver">
+            <div class="driver-header">
+              <h3>{{ selectedDriver.driver_id }}</h3>
+              <span class="status-badge" 
+                    [style.background-color]="getStatusColor(selectedDriver)"
+                    [style.color]="'white'">
+                {{ selectedDriver.isOnline ? 'Online' : 'Offline' }}
+              </span>
+            </div>
+            
+            <div class="driver-details">
+              <div class="detail-row">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ selectedDriver.latitude.toFixed(6) }}, {{ selectedDriver.longitude.toFixed(6) }}</span>
+              </div>
+              
+              <div class="detail-row">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ formatLastSeen(selectedDriver.lastSeenMinutes) }}</span>
+              </div>
+              
+              <div class="detail-row">
+                <mat-icon>update</mat-icon>
+                <span>Version: {{ selectedDriver.version }}</span>
+              </div>
+            </div>
+  
+            <div class="driver-actions">
+              <button 
+                mat-stroked-button 
+                color="primary"
+                (click)="centerOnDriver(selectedDriver)"
+                matTooltip="Center map on this driver">
+                <mat-icon>my_location</mat-icon>
+                Center
+              </button>
+              
+              <button 
+                mat-stroked-button 
+                color="accent"
+                (click)="loadDriverHistory(selectedDriver.driver_id)"
+                matTooltip="Show movement history">
+                <mat-icon>timeline</mat-icon>
+                History
+              </button>
+            </div>
+          </div>
+        </map-info-window>
+      </google-map>
+  
+      <!-- Loading Overlay -->
+      <div 
+        class="loading-overlay" 
+        *ngIf="isLoading">
+        <mat-progress-spinner 
+          diameter="60" 
+          mode="indeterminate"
+          color="primary">
+        </mat-progress-spinner>
+        <span>Loading driver locations...</span>
+      </div>
+  
+      <!-- No Drivers Message -->
+      <div 
+        class="no-drivers-message"
+        *ngIf="!isLoading && (drivers$ | async)?.length === 0">
+        <mat-icon class="large-icon">drive_eta</mat-icon>
+        <h2>No Drivers Found</h2>
+        <p>Make sure your backend is running and has driver data.</p>
+        <button mat-raised-button color="primary" (click)="refreshData()">
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+      </div>
+    </div>
+  
+    <!-- Map Legend -->
+    <div class="map-legend">
+      <div class="legend-item">
+        <div class="legend-dot online"></div>
+        <span>Online Drivers</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot offline"></div>
+        <span>Offline Drivers</span>
+      </div>
+      <div class="legend-item">
+        <mat-icon class="legend-icon">location_searching</mat-icon>
+        <span>Click map to find nearby drivers</span>
+      </div>
+    </div>
+  </div>

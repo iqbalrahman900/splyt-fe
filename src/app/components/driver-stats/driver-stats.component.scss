@@ -1,0 +1,203 @@
+.stats-container {
+    padding: 24px;
+    background-color: #f5f5f5;
+    min-height: calc(100vh - 64px);
+  
+    .stats-header {
+      h1 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        color: #333;
+        
+        mat-icon {
+          font-size: 32px;
+        }
+      }
+    }
+  }
+  
+  .quick-stats {
+    .stat-card {
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+      }
+      
+      mat-card-content {
+        padding: 24px !important;
+        
+        h2 {
+          font-size: 3rem;
+          margin: 0;
+          font-weight: 300;
+        }
+        
+        p {
+          margin: 8px 0 0 0;
+          color: #666;
+          font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+        
+        .stat-icon {
+          font-size: 48px;
+          opacity: 0.3;
+        }
+      }
+      
+      &.online-card {
+        border-left: 4px solid #4CAF50;
+        
+        h2 { color: #4CAF50; }
+        .stat-icon { color: #4CAF50; }
+      }
+      
+      &.offline-card {
+        border-left: 4px solid #FF9800;
+        
+        h2 { color: #FF9800; }
+        .stat-icon { color: #FF9800; }
+      }
+      
+      &.total-card {
+        border-left: 4px solid #2196F3;
+        
+        h2 { color: #2196F3; }
+        .stat-icon { color: #2196F3; }
+      }
+    }
+  }
+  
+  .detailed-stats {
+    .metric-section {
+      h3 {
+        margin: 0 0 16px 0;
+        color: #333;
+        font-weight: 500;
+      }
+      
+      .metric-list {
+        .metric-item {
+          padding: 12px 0;
+          border-bottom: 1px solid #eee;
+          
+          &:last-child {
+            border-bottom: none;
+          }
+          
+          span {
+            color: #666;
+          }
+          
+          strong {
+            color: #333;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+  
+  .realtime-status {
+    .status-item {
+      text-align: center;
+      
+      .status-indicator {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin: 0 auto 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &.online {
+          background-color: rgba(76, 175, 80, 0.1);
+          
+          .pulse-dot {
+            width: 20px;
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+          }
+        }
+      }
+      
+      mat-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        
+        &.frequency-icon {
+          color: #2196F3;
+        }
+        
+        &.freshness-icon {
+          color: #FF9800;
+        }
+      }
+      
+      h4 {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-weight: 500;
+      }
+      
+      p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    
+    span {
+      margin-top: 16px;
+      font-size: 16px;
+      color: #666;
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+  }
+  
+  // Responsive design
+  @media (max-width: 768px) {
+    .stats-container {
+      padding: 16px;
+    }
+    
+    .quick-stats .stat-card mat-card-content {
+      padding: 16px !important;
+      
+      h2 {
+        font-size: 2rem;
+      }
+    }
+    
+    .detailed-stats .metric-section {
+      margin-bottom: 24px;
+    }
+  }
